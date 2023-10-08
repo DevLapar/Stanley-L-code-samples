@@ -1,0 +1,32 @@
+<!--
+* Author: Stanley
+* Company: Aloha Shaka (www.alohashaka.com)
+* sound.manager.html 
+-->
+<div class="row sound-manager">
+	<div class="som-output-category" *ngFor="let channel of soundService.channels" [class.opened]="channel.toggled">
+		<ng-container [ngTemplateOutlet]="volumeTmpl"
+			[ngTemplateOutletContext]="{$implicit: channel.main, channel: channel}"></ng-container>
+		<ng-template [ngIf]="channel.toggled">
+			<div class="somoc-output" *ngFor="let output of channel.outputs">
+				<ng-container [ngTemplateOutlet]="volumeTmpl"
+					[ngTemplateOutletContext]="{$implicit: output}"></ng-container>
+			</div>
+		</ng-template>
+	</div>
+</div>
+
+<ng-template #volumeTmpl let-source let-channel="channel">
+	<div class="row somoc-label-holder">
+		<div class="box box somoc-label">{{source.label ? source.label : source.name}}</div>
+		<div class="box box box-right" *ngIf="source.master && channel && channel.outputs && channel.outputs.length > 0">
+			<div class="somoc-toggler" (click)="channel.toggled = !channel.toggled">
+				<sucon su-target="down" su-transform="up" [su-transformon]="channel.toggled"></sucon>
+			</div>
+		</div>
+	</div>
+	<div class="row somoc-control">
+		<input type="range" id="vol" name="vol" [(ngModel)]="source.options.volume"
+			(ngModelChange)="soundService.adjustVolume(source)" min="0" max="1" step="0.01">
+	</div>
+</ng-template>
